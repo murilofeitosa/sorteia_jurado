@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema do Tribunal do Júri - Tauá/CE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: #007bff;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 5px solid #007bff;
+        }
+
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+
+        .section h3::before {
+            content: "📋";
+            margin-right: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #28a745, #1e7e34);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(45deg, #ffc107, #e0a800);
+            color: #212529;
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .jurado-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .jurado-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.2);
+        }
+
+        .lista-resultado {
+            background: white;
+            border: 2px solid #007bff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            min-height: 200px;
+        }
+
+        .lista-resultado h4 {
+            color: #007bff;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .lista-item {
+            background: #f0f8ff;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #007bff;
+        }
+
+        .resultado-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .condicional {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #e7f3ff;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+
+        .condicional.ativo {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .alert {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.ativo {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚖️ Sistema do Tribunal do Júri</h1>
+            <p>Comarca de Tauá - Estado do Ceará</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" onclick="abrirAba('presenca')">📋 Presença dos Jurados</button>
+            <button class="tab" onclick="abrirAba('sorteio')">🎲 Sorteio do Conselho</button>
+            <button class="tab" onclick="abrirAba('ata')">📄 Dados da Ata</button>
+        </div>
+
+        <div id="presenca" class="tab-content active">
+            <div class="section">
+                <h3>Lista de Jurados Convocados</h3>
+                <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="marcarTodos()">✅ Marcar Todos como Presentes</button>
+                    <button class="btn btn-warning" onclick="limparTodos()">🔄 Limpar Seleções</button>
+                    <button class="btn btn-success" onclick="registrarPresenca()">💾 Registrar Presenças</button>
+                </div>
+                <div id="lista-jurados"></div>
+            </div>
+        </div>
+
+        <div id="sorteio" class="tab-content">
+            <div class="section">
+                <h3>Sorteio do Conselho de Sentença</h3>
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <button class="btn btn-success" onclick="iniciarSorteio()" style="font-size: 1.3em; padding: 20px 40px;">
+                        🎲 INICIAR SORTEIO DO CONSELHO
+                    </button>
+                </div>
+                
+                <div class="resultado-grid">
+                    <div class="lista-resultado">
+                        <h4>👥 Conselho de Sentença (7 jurados)</h4>
+                        <div id="conselho-lista"></div>
+                    </div>
+                    <div class="lista-resultado">
+                        <h4>❌ Recusados pela Defesa</h4>
+                        <div id="recusados-defesa"></div>
+                    </div>
+                    <div class="lista-resultado">
+                        <h4>❌ Recusados pela Acusação</h4>
+                        <div id="recusados-acusacao"></div>
+                    </div>
+                    <div class="lista-resultado">
+                        <h4>🚫 Impedidos (Foro Íntimo)</h4>
+                        <div id="impedidos-lista"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="ata" class="tab-content">
+            <form id="form-ata">
+                <div class="section">
+                    <h3>Dados Básicos da Sessão</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Número da Sessão:</label>
+                            <input type="number" id="numero-sessao" placeholder="Ex: 1, 2, 3...">
+                        </div>
+                        <div class="form-group">
+                            <label>Data da Sessão:</label>
+                            <input type="date" id="data-sessao">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Hora da Sessão:</label>
+                            <input type="time" id="hora-sessao">
+                        </div>
+                        <div class="form-group">
+                            <label>Número do Processo:</label>
+                            <input type="text" id="numero-processo" placeholder="0000000-00.0000.8.06.0000">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Profissionais Envolvidos</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nome do Juiz:</label>
+                            <input type="text" id="nome-juiz" placeholder="Dr. [Nome do Juiz]">
+                        </div>
+                        <div class="form-group">
+                            <label>Nome do Promotor:</label>
+                            <input type="text" id="nome-promotor" placeholder="Dr. [Nome do Promotor]">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tipo de Defensor:</label>
+                            <select id="tipo-defensor" onchange="mostrarOAB()">
+                                <option value="Defensor Público">Defensor Público</option>
+                                <option value="Advogado(a)">Advogado(a)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome do Defensor:</label>
+                            <input type="text" id="nome-defensor" placeholder="Nome completo">
+                        </div>
+                    </div>
+                    <div class="form-group condicional" id="campo-oab">
+                        <label>OAB/UF:</label>
+                        <input type="text" id="oab" placeholder="Ex: 12345/CE">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome(s) do(s) Acusado(s):</label>
+                        <input type="text" id="nome-acusados" placeholder="Nome completo do(s) réu(s)">
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Dispensas e Suplentes</h3>
+                    <div class="form-group">
+                        <label>Jurados Dispensados:</label>
+                        <textarea id="jurados-dispensados" placeholder="Liste os jurados dispensados, separados por vírgula" rows="2"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Fundamento da Dispensa:</label>
+                        <textarea id="fundamento-dispensa" placeholder="Justificativa legal para as dispensas" rows="2"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Foram sorteados suplentes?</label>
+                            <select id="suplentes" onchange="mostrarSuplentes()">
+                                <option value="Não">Não</option>
+                                <option value="Sim">Sim</option>
+                            </select>
+                        </div>
+                        <div class="form-group condicional" id="campo-suplentes">
+                            <label>Nome(s) dos suplentes:</label>
+                            <input type="text" id="nomes-suplentes" placeholder="Nome dos suplentes sorteados">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Testemunhas Dispensadas:</label>
+                        <textarea id="testemunhas-dispensadas" placeholder="Testemunhas dispensadas de comum acordo" rows="2"></textarea>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Instrução Plenária</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Há vítima a ser ouvida?</label>
+                            <select id="ha-vitima" onchange="mostrarVitima()">
+                                <option value="Não">Não</option>
+                                <option value="Sim">Sim</option>
+                            </select>
+                        </div>
+                        <div class="form-group condicional" id="campo-vitima">
+                            <label>Nome(s) da(s) vítima(s):</label>
+                            <input type="text" id="nome-vitima" placeholder="Nome completo da vítima">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Há testemunhas/informantes?</label>
+                        <select id="ha-testemunhas" onchange="mostrarTestemunhas()">
+                            <option value="Não">Não</option>
+                            <option value="Sim">Sim</option>
+                        </select>
+                    </div>
+                    
+                    <div class="condicional" id="campos-testemunhas">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Testemunhas da Acusação:</label>
+                                <textarea id="testemunhas-acusacao" placeholder="Nome das testemunhas da acusação" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Informantes da Acusação:</label>
+                                <textarea id="informantes-acusacao" placeholder="Nome dos informantes da acusação" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Testemunhas da Defesa:</label>
+                                <textarea id="testemunhas-defesa" placeholder="Nome das testemunhas da defesa" rows="2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Informantes da Defesa:</label>
+                                <textarea id="informantes-defesa" placeholder="Nome dos informantes da defesa" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Diligências</h3>
+                    <div class="form-group">
+                        <label>Foi requerida diligência probatória?</label>
+                        <select id="ha-diligencia" onchange="mostrarDiligencia()">
+                            <option value="Não">Não</option>
+                            <option value="Sim">Sim</option>
+                        </select>
+                    </div>
+                    
+                    <div class="condicional" id="campos-diligencia">
+                        <div class="form-group">
+                            <label>Qual diligência foi requerida?</label>
+                            <textarea id="qual-diligencia" placeholder="Descreva a diligência requerida" rows="2"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>A diligência foi deferida?</label>
+                                <select id="diligencia-deferida">
+                                    <option value="Sim">Sim</option>
+                                    <option value="Não">Não</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fundamento da decisão:</label>
+                                <textarea id="fundamento-diligencia" placeholder="Fundamento legal da decisão" rows="2"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Debates Orais</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Horário início MP:</label>
+                            <input type="time" id="hora-mp-inicio">
+                        </div>
+                        <div class="form-group">
+                            <label>Horário fim MP:</label>
+                            <input type="time" id="hora-mp-fim">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Pedido do Ministério Público:</label>
+                        <textarea id="pedido-mp" placeholder="Descreva o pedido do MP (condenação, artigos, etc.)" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Horário início Defesa:</label>
+                            <input type="time" id="hora-defesa-inicio">
+                        </div>
+                        <div class="form-group">
+                            <label>Horário fim Defesa:</label>
+                            <input type="time" id="hora-defesa-fim">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Pedido da Defesa:</label>
+                        <textarea id="pedido-defesa" placeholder="Descreva o pedido da defesa (absolvição, desclassificação, etc.)" rows="2"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Houve réplica?</label>
+                        <select id="houve-replica" onchange="mostrarReplica()">
+                            <option value="Não">Não</option>
+                            <option value="Sim">Sim</option>
+                        </select>
+                    </div>
+                    
+                    <div class="condicional" id="campos-replica">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Horário início réplica:</label>
+                                <input type="time" id="hora-replica-inicio">
+                            </div>
+                            <div class="form-group">
+                                <label>Horário fim réplica:</label>
+                                <input type="time" id="hora-replica-fim">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Horário início tréplica:</label>
+                                <input type="time" id="hora-treplica-inicio">
+                            </div>
+                            <div class="form-group">
+                                <label>Horário fim tréplica:</label>
+                                <input type="time" id="hora-treplica-fim">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Resultado do Julgamento</h3>
+                    <div class="form-group">
+                        <label>Resultado:</label>
+                        <select id="resultado-julgamento" onchange="atualizarTextoSentenca()">
+                            <option value="Condenação">Condenação</option>
+                            <option value="Absolvição">Absolvição</option>
+                        </select>
+                    </div>
+                    <div class="alert alert-success" id="texto-sentenca">
+                        Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a SENTENÇA CONDENATÓRIA, em voz alta, tornando público o julgado.
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Houve manifestação de recurso?</label>
+                        <select id="houve-recurso" onchange="mostrarRecurso()">
+                            <option value="Não">Não</option>
+                            <option value="Sim">Sim</option>
+                        </select>
+                    </div>
+                    
+                    <div class="condicional" id="campos-recurso">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Quem recorreu?</label>
+                                <select id="quem-recorreu">
+                                    <option value="A Defesa">A Defesa</option>
+                                    <option value="A Acusação">A Acusação</option>
+                                    <option value="Ambas as partes">Ambas as partes</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fundamento do recurso:</label>
+                                <input type="text" id="fundamento-recurso" placeholder="Ex: art. 593, III, a do CPP" value="art. 593, III, &quot;a&quot; do CPP">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Próxima Sessão</h3>
+                    <div class="form-group">
+                        <label>Haverá próxima sessão?</label>
+                        <select id="proxima-sessao" onchange="mostrarProximaSessao()">
+                            <option value="Não">Não</option>
+                            <option value="Sim">Sim</option>
+                        </select>
+                    </div>
+                    
+                    <div class="condicional" id="campos-proxima-sessao">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Data da próxima sessão:</label>
+                                <input type="date" id="data-proxima-sessao">
+                            </div>
+                            <div class="form-group">
+                                <label>Hora da próxima sessão:</label>
+                                <input type="time" id="hora-proxima-sessao">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; padding: 30px;">
+                    <button type="button" class="btn btn-success" onclick="gerarAta()" style="font-size: 1.5em; padding: 20px 50px;">
+                        📄 GERAR ATA DO JÚRI
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Lista de jurados
+        const jurados = [
+            "Antonia Gilderli Alves Venancio", "Antonia Wedna Ferreira Martins", "Antonio Cleurisney Carvalho Almeida",
+            "Antonio Jose de Aquino", "Antonio Luis Alves de Lima", "Arialdo Lima Urbano", "Domingas Pedrosa de Oliveira",
+            "Elizangela Gonçalves Fernandes Viana", "Emanuela Martins de Oliveira", "Francisca Fernandes Moreira Loiola",
+            "Ivaltania Gonçalves Martins Cavalheiro", "Julio Marcos Siqueira Lima", "Lidiane Rodrigues Lira",
+            "Luis Ednardo Benevides Reis", "Luiza Jessica Ribeiro de Sousa", "Madalena Maria Alves Mota Gomes",
+            "Maria Alves Veloso", "Maria Angelucia Carvalho de Brito", "Maria Audecira Sousa Cavalcante",
+            "Maria Cirlene Rodrigues Pereira", "Maria Elionete Araujo Teixeira", "Maria Jose Pires Santos da Franca",
+            "Rogermo Tertuliano de Melo", "Vilma Lacerda Aurelia", "Wilkens Cavalcante Mota"
+        ];
+
+        let presentes = [];
+        let ausentes = [];
+        let justificadas = [];
+        let conselho = [];
+        let recusadosDefesa = [];
+        let recusadosAcusacao = [];
+        let impedidos = [];
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            criarListaJurados();
+            // Garante que o texto da sentença inicial esteja correto ao carregar a página
+            atualizarTextoSentenca(); 
+        });
+
+        // Função para abrir abas
+        function abrirAba(aba) {
+            // Esconder todas as abas
+            const abas = document.querySelectorAll('.tab-content');
+            abas.forEach(a => a.classList.remove('active'));
+            
+            const botoes = document.querySelectorAll('.tab');
+            botoes.forEach(b => b.classList.remove('active'));
+            
+            // Mostrar aba selecionada e ativar o botão
+            document.getElementById(aba).classList.add('active');
+            // 'event.target' se refere ao botão que foi clicado
+            event.target.classList.add('active'); 
+        }
+
+        // Criar lista de jurados
+        function criarListaJurados() {
+            const container = document.getElementById('lista-jurados');
+            container.innerHTML = '';
+            
+            jurados.forEach((jurado, index) => {
+                const item = document.createElement('div');
+                item.className = 'jurado-item';
+                item.innerHTML = `
+                    <div class="jurado-name">${jurado}</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="presente-${index}" onchange="atualizarCheckboxes(${index}, 'presente')">
+                            <label for="presente-${index}">Presente</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="justificada-${index}" onchange="atualizarCheckboxes(${index}, 'justificada')">
+                            <label for="justificada-${index}">Ausência Justificada</label>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Atualizar checkboxes (só um pode estar marcado por jurado)
+        function atualizarCheckboxes(index, tipo) {
+            if (tipo === 'presente') {
+                if (document.getElementById(`presente-${index}`).checked) {
+                    document.getElementById(`justificada-${index}`).checked = false;
+                }
+            } else if (tipo === 'justificada') {
+                if (document.getElementById(`justificada-${index}`).checked) {
+                    document.getElementById(`presente-${index}`).checked = false;
+                }
+            }
+        }
+
+        // Marcar todos como presentes
+        function marcarTodos() {
+            jurados.forEach((_, index) => {
+                document.getElementById(`presente-${index}`).checked = true;
+                document.getElementById(`justificada-${index}`).checked = false;
+            });
+        }
+
+        // Limpar todas as seleções
+        function limparTodos() {
+            jurados.forEach((_, index) => {
+                document.getElementById(`presente-${index}`).checked = false;
+                document.getElementById(`justificada-${index}`).checked = false;
+            });
+        }
+
+        // Registrar presença
+        function registrarPresenca() {
+            presentes = [];
+            ausentes = [];
+            justificadas = [];
+            
+            jurados.forEach((jurado, index) => {
+                const presente = document.getElementById(`presente-${index}`).checked;
+                const justificada = document.getElementById(`justificada-${index}`).checked;
+                
+                if (presente) {
+                    presentes.push(jurado);
+                } else if (justificada) {
+                    ausentes.push(jurado);
+                    justificadas.push(jurado);
+                } else {
+                    ausentes.push(jurado);
+                }
+            });
+            
+            alert(`✅ Presença registrada!\n\n📋 Presentes: ${presentes.length}\n❌ Ausentes: ${ausentes.length}\n📝 Justificadas: ${justificadas.length}`);
+        }
+
+        // Iniciar sorteio
+        function iniciarSorteio() {
+            if (presentes.length === 0) {
+                alert('⚠️ Primeiro registre a presença dos jurados na aba anterior!');
+                return;
+            }
+            
+            if (presentes.length < 7) {
+                alert('⚠️ Não há jurados suficientes para formar o conselho (mínimo 7)!');
+                return;
+            }
+            
+            // Resetar listas
+            conselho = [];
+            recusadosDefesa = [];
+            recusadosAcusacao = [];
+            impedidos = [];
+            
+            let recusasDefesa = 3;
+            let recusasAcusacao = 3;
+            let listaPresentes = [...presentes]; // Copia a lista de presentes para não modificar a original
+            
+            // Sorteio automático
+            while (conselho.length < 7 && listaPresentes.length > 0) {
+                const indiceAleatorio = Math.floor(Math.random() * listaPresentes.length);
+                const juradoSorteado = listaPresentes[indiceAleatorio];
+                
+                const aceitar = confirm(`🎲 Jurado sorteado: ${juradoSorteado}\n\n✅ Clique OK para ACEITAR no conselho\n❌ Clique CANCELAR para RECUSAR`);
+                
+                if (aceitar) {
+                    conselho.push(juradoSorteado);
+                } else {
+                    const tipoRecusa = prompt(`❌ Recusa do jurado: ${juradoSorteado}\n\nDigite:\n1 - Recusa pela DEFESA\n2 - Recusa pela ACUSAÇÃO\n3 - Impedimento (Foro Íntimo)`);
+                    
+                    if (tipoRecusa === '1') {
+                        if (recusasDefesa > 0) {
+                            recusadosDefesa.push(juradoSorteado);
+                            recusasDefesa--;
+                        } else {
+                            alert('⚠️ Limite de recusas pela Defesa atingido! Jurado será aceito automaticamente.');
+                            conselho.push(juradoSorteado);
+                        }
+                    } else if (tipoRecusa === '2') {
+                        if (recusasAcusacao > 0) {
+                            recusadosAcusacao.push(juradoSorteado);
+                            recusasAcusacao--;
+                        } else {
+                            alert('⚠️ Limite de recusas pela Acusação atingido! Jurado será aceito automaticamente.');
+                            conselho.push(juradoSorteado);
+                        }
+                    } else if (tipoRecusa === '3') {
+                        impedidos.push(juradoSorteado);
+                    } else {
+                        alert('⚠️ Opção inválida! Jurado será aceito automaticamente.');
+                        conselho.push(juradoSorteado);
+                    }
+                }
+                
+                listaPresentes.splice(indiceAleatorio, 1); // Remove o jurado sorteado da lista de disponíveis
+            }
+            
+            atualizarListasResultado();
+            
+            if (conselho.length === 7) {
+                alert('🎉 Conselho de Sentença formado com sucesso!\n\n👥 7 jurados sorteados e aceitos.');
+            } else {
+                alert('⚠️ Não foi possível formar o conselho completo devido ao número insuficiente de jurados.');
+            }
+        }
+
+        // Atualizar listas de resultado
+        function atualizarListasResultado() {
+            document.getElementById('conselho-lista').innerHTML = conselho.map((j, i) => 
+                `<div class="lista-item">${i + 1}. ${j}</div>`
+            ).join('');
+            
+            document.getElementById('recusados-defesa').innerHTML = recusadosDefesa.length > 0 
+                ? recusadosDefesa.map(j => `<div class="lista-item">${j}</div>`).join('')
+                : '<div style="color: #6c757d; font-style: italic;">Nenhum jurado recusado</div>';
+                
+            document.getElementById('recusados-acusacao').innerHTML = recusadosAcusacao.length > 0 
+                ? recusadosAcusacao.map(j => `<div class="lista-item">${j}</div>`).join('')
+                : '<div style="color: #6c757d; font-style: italic;">Nenhum jurado recusado</div>';
+                
+            document.getElementById('impedidos-lista').innerHTML = impedidos.length > 0 
+                ? impedidos.map(j => `<div class="lista-item">${j}</div>`).join('')
+                : '<div style="color: #6c757d; font-style: italic;">Nenhum jurado impedido</div>';
+        }
+
+        // Funções para mostrar/ocultar campos condicionais
+        function mostrarOAB() {
+            const campo = document.getElementById('campo-oab');
+            const tipo = document.getElementById('tipo-defensor').value;
+            campo.classList.toggle('ativo', tipo === 'Advogado(a)');
+        }
+
+        function mostrarSuplentes() {
+            const campo = document.getElementById('campo-suplentes');
+            const valor = document.getElementById('suplentes').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function mostrarVitima() {
+            const campo = document.getElementById('campo-vitima');
+            const valor = document.getElementById('ha-vitima').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function mostrarTestemunhas() {
+            const campo = document.getElementById('campos-testemunhas');
+            const valor = document.getElementById('ha-testemunhas').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function mostrarDiligencia() {
+            const campo = document.getElementById('campos-diligencia');
+            const valor = document.getElementById('ha-diligencia').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function mostrarReplica() {
+            const campo = document.getElementById('campos-replica');
+            const valor = document.getElementById('houve-replica').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function mostrarRecurso() {
+            const campo = document.getElementById('campos-recurso');
+            const valor = document.getElementById('houve-recurso').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function mostrarProximaSessao() {
+            const campo = document.getElementById('campos-proxima-sessao');
+            const valor = document.getElementById('proxima-sessao').value;
+            campo.classList.toggle('ativo', valor === 'Sim');
+        }
+
+        function atualizarTextoSentenca() {
+            const resultado = document.getElementById('resultado-julgamento').value;
+            const texto = document.getElementById('texto-sentenca');
+            
+            if (resultado === 'Absolvição') {
+                texto.innerHTML = 'Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a <strong>SENTENÇA ABSOLUTÓRIA</strong>, em voz alta, tornando público o julgado.';
+            } else {
+                texto.innerHTML = 'Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a <strong>SENTENÇA CONDENATÓRIA</strong>, em voz alta, tornando público o julgado.';
+            }
+        }
+
+        // Função para formatar hora
+        function formatarHora(hora) {
+            if (!hora) return '';
+            const [h, m] = hora.split(':');
+            const hInt = parseInt(h);
+            const mInt = parseInt(m);
+            if (mInt === 0) {
+                return `${hInt}h`;
+            } else {
+                return `${hInt}h${mInt.toString().padStart(2, '0')}min`;
+            }
+        }
+
+        // Função para formatar data
+        function formatarData(data) {
+            if (!data) return '';
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        // Função para gerar a ata
+        function gerarAta() {
+            // Validações básicas
+            const numeroProcesso = document.getElementById('numero-processo').value.trim();
+            if (!numeroProcesso || !/^\d{7}-\d{2}\.\d{4}\.8\.06\.\d{4}$/.test(numeroProcesso)) {
+                alert('❌ Número de processo inválido ou não preenchido!\nFormato: 0000000-00.0000.8.06.0000');
+                return;
+            }
+
+            if (conselho.length === 0) {
+                alert('❌ Realize o sorteio do conselho antes de gerar a ata!');
+                return;
+            }
+
+            // Coletar dados do formulário
+            const dados = {
+                numeroSessao: document.getElementById('numero-sessao').value,
+                dataSessao: formatarData(document.getElementById('data-sessao').value),
+                horaSessao: formatarHora(document.getElementById('hora-sessao').value),
+                numeroProcesso: numeroProcesso,
+                nomeJuiz: document.getElementById('nome-juiz').value,
+                nomePromotor: document.getElementById('nome-promotor').value,
+                tipoDefensor: document.getElementById('tipo-defensor').value,
+                nomeDefensor: document.getElementById('nome-defensor').value,
+                oab: document.getElementById('oab').value,
+                nomeAcusados: document.getElementById('nome-acusados').value,
+                juradosDispensados: document.getElementById('jurados-dispensados').value,
+                fundamentoDispensa: document.getElementById('fundamento-dispensa').value,
+                suplentes: document.getElementById('suplentes').value,
+                nomesSuplentes: document.getElementById('nomes-suplentes').value,
+                testemunhasDispensadas: document.getElementById('testemunhas-dispensadas').value,
+                haVitima: document.getElementById('ha-vitima').value,
+                nomeVitima: document.getElementById('nome-vitima').value,
+                haTestemunhas: document.getElementById('ha-testemunhas').value,
+                testemunhasAcusacao: document.getElementById('testemunhas-acusacao').value,
+                informantesAcusacao: document.getElementById('informantes-acusacao').value,
+                testemunhasDefesa: document.getElementById('testemunhas-defesa').value,
+                informantesDefesa: document.getElementById('informantes-defesa').value,
+                haDiligencia: document.getElementById('ha-diligencia').value,
+                qualDiligencia: document.getElementById('qual-diligencia').value,
+                diligenciaDeferida: document.getElementById('diligencia-deferida').value,
+                fundamentoDiligencia: document.getElementById('fundamento-diligencia').value,
+                horaMpInicio: formatarHora(document.getElementById('hora-mp-inicio').value),
+                horaMpFim: formatarHora(document.getElementById('hora-mp-fim').value),
+                pedidoMp: document.getElementById('pedido-mp').value,
+                horaDefesaInicio: formatarHora(document.getElementById('hora-defesa-inicio').value),
+                horaDefesaFim: formatarHora(document.getElementById('hora-defesa-fim').value),
+                pedidoDefesa: document.getElementById('pedido-defesa').value,
+                houveReplica: document.getElementById('houve-replica').value,
+                horaReplicaInicio: formatarHora(document.getElementById('hora-replica-inicio').value),
+                horaReplicaFim: formatarHora(document.getElementById('hora-replica-fim').value),
+                horaTriplicaInicio: formatarHora(document.getElementById('hora-treplica-inicio').value),
+                horaTriplicaFim: formatarHora(document.getElementById('hora-treplica-fim').value),
+                resultadoJulgamento: document.getElementById('resultado-julgamento').value,
+                houveRecurso: document.getElementById('houve-recurso').value,
+                quemRecorreu: document.getElementById('quem-recorreu').value,
+                fundamentoRecurso: document.getElementById('fundamento-recurso').value,
+                proximaSessao: document.getElementById('proxima-sessao').value,
+                dataProximaSessao: formatarData(document.getElementById('data-proxima-sessao').value),
+                horaProximaSessao: formatarHora(document.getElementById('hora-proxima-sessao').value)
+            };
+
+            // Gerar texto da ata
+            let ata = [];
+            
+            ata.push(`ATA DA ${dados.numeroSessao}ª SESSÃO DE JULGAMENTO DO TRIBUNAL DO JÚRI`);
+            ata.push(`Aos ${dados.dataSessao}, às ${dados.horaSessao}, nesta cidade e Comarca de Tauá, Estado do Ceará, no edifício do Tribunal do Júri, em plenário, presentes o MM. Juiz de Direito, Dr. ${dados.nomeJuiz}, o Promotor de Justiça, Dr. ${dados.nomePromotor}, o ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, os Senhores Jurados abaixo identificados, o(s) Acusado(s), Sr(s). ${dados.nomeAcusados} e os demais circunstantes.`);
+            
+            ata.push(`Às ${dados.horaSessao} deu-se início aos trabalhos preparatórios para o julgamento dos autos de Ação Penal nº ${dados.numeroProcesso}, momento em que o MM. Juiz de Direito, Presidente da presente sessão de julgamento, após atestar a presença das partes e demais profissionais acima identificados, deliberou acerca dos pedidos de isenção e dispensa dos jurados.`);
+            
+            ata.push("No mesmo momento, o MM. Juiz Presidente determinou que as testemunhas/ofendido(s) presentes fossem recolhidas a um lugar onde umas não pudessem ouvir os depoimentos das outras, garantindo-se a incomunicabilidade, e passou a verificar se a urna continha as cédulas com os nomes dos jurados sorteados.");
+            
+            ata.push("Precedentemente ao sorteio dos jurados e, em atenção ao art. 5º da Recomendação n. 55, de 08/10/2019, do CNJ, o magistrado determinou a exibição do vídeo institucional elaborado por aquele órgão, objetivando ambientar os jurados convocados para a sessão de julgamento.");
+            
+            ata.push(`Às ${dados.horaSessao} foi dado início ao julgamento do(s) réu(s) ${dados.nomeAcusados}, utilizando-se do sistema Microsoft Teams, na qual se procedeu à gravação audiovisual dos depoimentos e do interrogatório. O MM. Juiz de Direito ordenou que o Sr. Diretor de Secretaria chamasse nominalmente os jurados convocados, sendo que compareceram os seguintes jurados:`);
+            
+            ata.push(presentes.join(', '));
+
+            // Parágrafos condicionais
+            if (dados.juradosDispensados.trim()) {
+                ata.push(`\nDiante do requerimento tempestivo foram dispensados os jurados: ${dados.juradosDispensados}.`);
+            }
+            if (dados.fundamentoDispensa.trim()) {
+                ata.push(`Os pedidos de dispensa/isenção contaram com o deferimento do Juiz Presidente amparado nos seguintes fundamentos: ${dados.fundamentoDispensa}.`);
+            }
+            if (dados.suplentes === "Sim" && dados.nomesSuplentes.trim()) {
+                ata.push(`Foram sorteados suplentes: ${dados.nomesSuplentes}.`);
+            }
+            if (dados.testemunhasDispensadas.trim()) {
+                ata.push(`De comum acordo, as partes dispensaram a oitiva das testemunhas ${dados.testemunhasDispensadas}, o que foi homologado pelo juízo.`);
+            }
+
+            ata.push("Após, o MM. Juiz declarou que iria formar o Conselho de Sentença e advertiu os jurados quanto às hipóteses de impedimento, suspeição e incompatibilidade, bem como, que uma vez sorteados, não poderiam se comunicar entre si e com outrem, nem manifestar sua opinião sobre o processo, sob pena de exclusão do Conselho de Sentença e multa de 01 (um) a 10 (dez) salários-mínimos.");
+            
+            ata.push("À medida que os nomes foram sorteados, o MM. Juiz de Direito realizou a leitura em voz alta e, aceitos, compuseram o Conselho de Sentença os seguintes jurados:");
+            
+            conselho.forEach((jurado, i) => {
+                ata.push(`${i+1}. ${jurado}`);
+            });
+            
+            ata.push(`Foram recusados imotivadamente pelo Ministério Público os seguintes jurados: ${recusadosAcusacao.length > 0 ? recusadosAcusacao.join(', ') : 'Nenhum'}.`);
+            ata.push(`Foram recusados imotivadamente pela Defesa os seguintes jurados: ${recusadosDefesa.length > 0 ? recusadosDefesa.join(', ') : 'Nenhum'}.`);
+            
+            ata.push('Seguindo, o MM. Juiz Presidente compromissou o Conselho de Sentença lendo a exortação constante do art. 472 do CPP, pela qual cada jurado chamado nominalmente respondeu: "assim o prometo". Os Srs. Jurados receberam os documentos a que alude o art. 472, parágrafo único, do CPP, momento em que o MM. Juiz de Direito explicou a sua natureza jurídica, expressando-se nos seguintes termos:');
+            
+            ata.push('"Prezados membros do Conselho de Sentença, a partir desse momento os senhores terão acesso ao relatório do processo e também à decisão de pronúncia. Esclareço que a decisão de pronúncia representa um mero juízo de admissibilidade da versão acusatória, sem a qual o réu não poderia ser julgado perante o Tribunal do Júri. Em hipótese alguma, constitui um prejulgamento do caso e não deverá ser considerada pelos Srs. como um argumento de autoridade apto a qualquer juízo de valor a respeito do mérito. Por mandamento constitucional, após a devida instrução e sustentações orais em plenário, o Conselho de Sentença é soberano para, sigilosamente, apreciar as teses que envolvem o presente caso, livre de qualquer influência de terceiros ou mesmo da justiça togada."');
+
+            // Instrução plenária
+            if (dados.haVitima === "Sim" && dados.nomeVitima.trim()) {
+                ata.push(`Seguindo, teve início a instrução plenária com a oitiva da vítima ${dados.nomeVitima}.`);
+            }
+
+            // Testemunhas
+            if (dados.haTestemunhas === "Sim") {
+                if (dados.testemunhasAcusacao.trim()) {
+                    ata.push(`Em continuação, foram inquiridas as seguintes testemunhas/informantes arroladas pela acusação: ${dados.testemunhasAcusacao}. As quais prestaram o compromisso de dizer a verdade, com exceção de ${dados.informantesAcusacao || '________'}, que foi ouvido como informante.`);
+                }
+                if (dados.testemunhasDefesa.trim()) {
+                    ata.push(`Posteriormente, foram tomados os depoimentos das testemunhas/informantes indicadas pela Defesa: ${dados.testemunhasDefesa}. As quais prestaram o compromisso de dizer a verdade, com exceção de ${dados.informantesDefesa || '________'}, que foi ouvido como informante. Todos os depoimentos foram gravados em arquivo de áudio/vídeo e foram juntados aos autos.`);
+                }
+            } else {
+                ata.push("Após, passou-se ao interrogatório do réu.");
+            }
+
+            // Diligência
+            if (dados.haDiligencia === "Sim") {
+                ata.push(`Foi requerida diligência probatória ou leitura de peças? Sim. Se sim, qual? ${dados.qualDiligencia} Foi deferida? ${dados.diligenciaDeferida} Por quais fundamentos? ${dados.fundamentoDiligencia}`);
+            } else {
+                ata.push("Foi requerida diligência probatória ou leitura de peças? Não.");
+            }
+
+            ata.push("Ato contínuo, foi garantido ao acusado o direito de entrevistar-se de maneira reservada com o seu defensor. Após, o acusado foi informado de todos os seus direitos constitucionais, em especial: o direito de permanecer calado e de não responder as perguntas que lhe forem formuladas.");
+            
+            ata.push("Dirigindo-se aos Srs. Jurados, o MM. Juiz de Direito explicou que o eventual silêncio do acusado não importará em confissão e não poderá ser interpretado em prejuízo da sua defesa. Na sequência, o acusado exerceu a sua autodefesa em plenário, tudo conforme arquivo de áudio/vídeo que foi juntado aos autos.");
+            
+            ata.push(`Seguindo, o MM. Juiz de Direito advertiu às partes das proibições constantes no artigo 478, incisos I e II e artigo 479 do Código de Processo Penal e passou a palavra ao DD. representante do Ministério Público, Dr. ${dados.nomePromotor}, o qual, utilizando-se do horário das ${dados.horaMpInicio} às ${dados.horaMpFim}, requereu: ${dados.pedidoMp || '____'}.`);
+            
+            ata.push(`Em seguida, foi concedida a palavra ao ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, que requereu: ${dados.pedidoDefesa || '____'}. Utilizando-se do horário das ${dados.horaDefesaInicio} às ${dados.horaDefesaFim}.`);
+            
+            ata.push(`Terminado o discurso da Defesa, o Meritíssimo Juiz indagou à Representante do Ministério Público se desejava ir à réplica, tendo ela respondido que ${dados.houveReplica}.`);
+
+            if (dados.houveReplica === "Sim") {
+                ata.push(`Usando o direito da réplica das ${dados.horaReplicaInicio} às ${dados.horaReplicaFim}, o DD. representante do Ministério Público reiterou o pedido de condenação.`);
+                ata.push(`Treplicando, a Defesa falou das ${dados.horaTriplicaInicio} às ${dados.horaTriplicaFim} e reforçou o pedido de absolvição.`);
+            }
+
+            ata.push("Encerrados os debates, após questionados pelo MM. Juiz de Direito, os jurados informaram que estavam habilitados a julgar o caso penal e que não necessitavam de qualquer outro esclarecimento.");
+            ata.push("Na sequência, uma vez lidos e explicados os quesitos em plenário, nenhuma das partes fez qualquer requerimento ou reclamação. Em seguida, o MM. Juiz de Direito declarou que iria proceder à votação e solicitou que o salão fosse esvaziado para este fim, permanecendo apenas as partes, o Oficial de Justiça e a mim, Diretor de Secretaria.");
+            ata.push("No salão esvaziado, sob sua presidência, após a advertência constante no disposto no artigo 485, § 2º, do Código de Processo Penal, explicou o procedimento a ser seguido e deu início à votação, fazendo o uso de pequenas cédulas, feitas de papel opaco, facilmente dobráveis e que continham as palavras \"sim\" e \"não\".");
+            ata.push("Durante a votação, foram utilizadas duas urnas, sendo uma para os votos e a outra para as cédulas não utilizadas. Após cada resposta, verificados os votos e as cédulas não utilizadas, o MM. Juiz de Direito determinou o registro no termo de votação de cada quesito, bem como o resultado do julgamento.");
+            
+            // Sentença
+            const textoSentenca = dados.resultadoJulgamento === 'Absolvição' 
+                ? "Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a SENTENÇA ABSOLUTÓRIA, em voz alta, tornando público o julgado."
+                : "Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a SENTENÇA CONDENATÓRIA, em voz alta, tornando público o julgado.";
+            
+            ata.push(textoSentenca);
+
+            // Recurso
+            if (dados.houveRecurso === "Sim") {
+                ata.push(`${dados.quemRecorreu} manifestou, em plenário, a intenção de recorrer da decisão, nos termos do ${dados.fundamentoRecurso}, alegando nulidade posterior à pronúncia.`);
+                ata.push('Decisão: "Recebo o recurso interposto uma vez que estão presentes os pressupostos de admissibilidade. Após a degravação dos registros de áudios desta sessão de julgamento, remetam-se os autos à Defensoria Pública para apresentação das razões recursais. Em seguida, dê-se vista ao Ministério Público para contrarrazões. Por fim, proceda-se a secretaria com as demais diligências de praxe."');
+            }
+
+            // Próxima data
+            if (dados.proximaSessao === "Sim") {
+                ata.push(`Agradecendo às partes e aos Srs. Jurados e, lembrando-os da convocação para o dia ${dados.dataProximaSessao}, às ${dados.horaProximaSessao}, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, Murilo Medeiros Mariz Alexandrino Feitosa, Diretor de Secretaria, lavrei a presente ata.`);
+            } else {
+                ata.push("Agradecendo às partes e aos Srs. Jurados, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, Murilo Medeiros Mariz Alexandrino Feitosa, Diretor de Secretaria, lavrei a presente ata.");
+            }
+
+            // Criar e baixar arquivo
+            const textoCompleto = ata.join('\n\n');
+            const blob = new Blob([textoCompleto], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ATA_JURI_${numeroProcesso}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert('✅ Ata gerada e baixada com sucesso!\n\n📄 Arquivo: ATA_JURI_' + numeroProcesso + '.txt');
+        }
+    </script>
+</body>
+</html>
