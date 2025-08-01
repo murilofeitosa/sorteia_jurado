@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema do Tribunal do Júri - Tauá/CE</title>
+    <title>Sistema do Tribunal do Júri - Ceará</title>
     <style>
         * {
             margin: 0;
@@ -310,13 +310,33 @@
             width: 0%;
             transition: width 0.3s ease;
         }
+        
+        .dynamic-field-container {
+            margin-bottom: 15px;
+        }
+        
+        .btn-add-field {
+            background: #6c757d;
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .btn-remove-field {
+            background: #dc3545;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>⚖️ Sistema do Tribunal do Júri</h1>
-            <p>Comarca de Tauá - Estado do Ceará</p>
+            <p>Estado do Ceará</p>
         </div>
 
         <div class="tabs">
@@ -327,13 +347,32 @@
 
         <div id="presenca" class="tab-content active">
             <div class="section">
+                <h3>Configuração Inicial</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Comarca:</label>
+                        <input type="text" id="comarca" placeholder="Ex: Tauá, Fortaleza, Juazeiro do Norte...">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Digitador:</label>
+                        <input type="text" id="nome-digitador" placeholder="Seu nome completo">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section">
                 <h3>Lista de Jurados Convocados</h3>
+                <div class="form-group">
+                    <label>Digite os nomes dos jurados (um por linha):</label>
+                    <textarea id="lista-jurados-input" rows="10" placeholder="Digite um jurado por linha"></textarea>
+                </div>
                 <div style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="carregarJurados()">📋 Carregar Jurados</button>
                     <button class="btn btn-primary" onclick="marcarTodos()">✅ Marcar Todos como Presentes</button>
                     <button class="btn btn-warning" onclick="limparTodos()">🔄 Limpar Seleções</button>
                     <button class="btn btn-success" onclick="registrarPresenca()">💾 Registrar Presenças</button>
                 </div>
-                <div id="lista-jurados"></div>
+                <div id="lista-jurados-container"></div>
             </div>
         </div>
 
@@ -422,9 +461,15 @@
                         <label>OAB/UF:</label>
                         <input type="text" id="oab" placeholder="Ex: 12345/CE">
                     </div>
+                    
                     <div class="form-group">
-                        <label>Nome(s) do(s) Acusado(s):</label>
-                        <input type="text" id="nome-acusados" placeholder="Nome completo do(s) réu(s)">
+                        <label>Acusado(s):</label>
+                        <div id="acusados-container">
+                            <div class="dynamic-field-container">
+                                <input type="text" class="nome-acusado" placeholder="Nome completo do réu">
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-add-field" onclick="adicionarAcusado()">+ Adicionar outro réu</button>
                     </div>
                 </div>
 
@@ -500,37 +545,6 @@
                             <div class="form-group">
                                 <label>Informantes da Defesa:</label>
                                 <textarea id="informantes-defesa" placeholder="Nome dos informantes da defesa" rows="2"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>Diligências</h3>
-                    <div class="form-group">
-                        <label>Foi requerida diligência probatória?</label>
-                        <select id="ha-diligencia" onchange="mostrarDiligencia()">
-                            <option value="Não">Não</option>
-                            <option value="Sim">Sim</option>
-                        </select>
-                    </div>
-                    
-                    <div class="condicional" id="campos-diligencia">
-                        <div class="form-group">
-                            <label>Qual diligência foi requerida?</label>
-                            <textarea id="qual-diligencia" placeholder="Descreva a diligência requerida" rows="2"></textarea>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>A diligência foi deferida?</label>
-                                <select id="diligencia-deferida">
-                                    <option value="Sim">Sim</option>
-                                    <option value="Não">Não</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Fundamento da decisão:</label>
-                                <textarea id="fundamento-diligencia" placeholder="Fundamento legal da decisão" rows="2"></textarea>
                             </div>
                         </div>
                     </div>
@@ -673,18 +687,8 @@
     </div>
 
     <script>
-        // Lista de jurados
-        const jurados = [
-            "Antonia Gilderli Alves Venancio", "Antonia Wedna Ferreira Martins", "Antonio Cleurisney Carvalho Almeida",
-            "Antonio Jose de Aquino", "Antonio Luis Alves de Lima", "Arialdo Lima Urbano", "Domingas Pedrosa de Oliveira",
-            "Elizangela Gonçalves Fernandes Viana", "Emanuela Martins de Oliveira", "Francisca Fernandes Moreira Loiola",
-            "Ivaltania Gonçalves Martins Cavalheiro", "Julio Marcos Siqueira Lima", "Lidiane Rodrigues Lira",
-            "Luis Ednardo Benevides Reis", "Luiza Jessica Ribeiro de Sousa", "Madalena Maria Alves Mota Gomes",
-            "Maria Alves Veloso", "Maria Angelucia Carvalho de Brito", "Maria Audecira Sousa Cavalcante",
-            "Maria Cirlene Rodrigues Pereira", "Maria Elionete Araujo Teixeira", "Maria Jose Pires Santos da Franca",
-            "Rogermo Tertuliano de Melo", "Vilma Lacerda Aurelia", "Wilkens Cavalcante Mota"
-        ];
-
+        // Lista de jurados (será preenchida pelo usuário)
+        let jurados = [];
         let presentes = [];
         let ausentes = [];
         let justificadas = [];
@@ -695,7 +699,6 @@
 
         // Inicializar quando a página carregar
         document.addEventListener('DOMContentLoaded', function() {
-            criarListaJurados();
             // Garante que o texto da sentença inicial esteja correto ao carregar a página
             atualizarTextoSentenca(); 
         });
@@ -715,9 +718,22 @@
             event.target.classList.add('active'); 
         }
 
+        // Carregar jurados digitados pelo usuário
+        function carregarJurados() {
+            const listaInput = document.getElementById('lista-jurados-input').value.trim();
+            if (!listaInput) {
+                alert('Por favor, digite os nomes dos jurados convocados.');
+                return;
+            }
+            
+            jurados = listaInput.split('\n').filter(nome => nome.trim() !== '');
+            criarListaJurados();
+            alert(`Foram carregados ${jurados.length} jurados na lista.`);
+        }
+
         // Criar lista de jurados
         function criarListaJurados() {
-            const container = document.getElementById('lista-jurados');
+            const container = document.getElementById('lista-jurados-container');
             container.innerHTML = '';
             
             jurados.forEach((jurado, index) => {
@@ -740,6 +756,25 @@
             });
         }
 
+        // Adicionar campo para outro réu
+        function adicionarAcusado() {
+            const container = document.getElementById('acusados-container');
+            const div = document.createElement('div');
+            div.className = 'dynamic-field-container';
+            div.innerHTML = `
+                <input type="text" class="nome-acusado" placeholder="Nome completo do réu">
+                <button type="button" class="btn-remove-field" onclick="this.parentElement.remove()">Remover</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Obter lista de réus
+        function obterAcusados() {
+            const inputs = document.querySelectorAll('.nome-acusado');
+            const nomes = Array.from(inputs).map(input => input.value.trim()).filter(nome => nome !== '');
+            return nomes.length > 0 ? nomes.join(', ') : '________';
+        }
+
         // Atualizar checkboxes (só um pode estar marcado por jurado)
         function atualizarCheckboxes(index, tipo) {
             if (tipo === 'presente') {
@@ -755,6 +790,11 @@
 
         // Marcar todos como presentes
         function marcarTodos() {
+            if (jurados.length === 0) {
+                alert('Primeiro carregue a lista de jurados.');
+                return;
+            }
+            
             jurados.forEach((_, index) => {
                 document.getElementById(`presente-${index}`).checked = true;
                 document.getElementById(`justificada-${index}`).checked = false;
@@ -763,6 +803,11 @@
 
         // Limpar todas as seleções
         function limparTodos() {
+            if (jurados.length === 0) {
+                alert('Primeiro carregue a lista de jurados.');
+                return;
+            }
+            
             jurados.forEach((_, index) => {
                 document.getElementById(`presente-${index}`).checked = false;
                 document.getElementById(`justificada-${index}`).checked = false;
@@ -771,6 +816,11 @@
 
         // Registrar presença
         function registrarPresenca() {
+            if (jurados.length === 0) {
+                alert('Primeiro carregue a lista de jurados.');
+                return;
+            }
+            
             presentes = [];
             ausentes = [];
             justificadas = [];
@@ -964,6 +1014,19 @@
         // Função para gerar a ata
         function gerarAta() {
             // Validações básicas
+            const comarca = document.getElementById('comarca').value.trim();
+            const digitador = document.getElementById('nome-digitador').value.trim();
+            
+            if (!comarca) {
+                alert('Por favor, informe a comarca.');
+                return;
+            }
+            
+            if (!digitador) {
+                alert('Por favor, informe o nome do digitador.');
+                return;
+            }
+            
             const numeroProcesso = document.getElementById('numero-processo').value.trim();
             if (!numeroProcesso || !/^\d{7}-\d{2}\.\d{4}\.8\.06\.\d{4}$/.test(numeroProcesso)) {
                 alert('❌ Número de processo inválido ou não preenchido!\nFormato: 0000000-00.0000.8.06.0000');
@@ -977,6 +1040,8 @@
 
             // Coletar dados do formulário
             const dados = {
+                comarca: comarca,
+                digitador: digitador,
                 numeroSessao: document.getElementById('numero-sessao').value,
                 dataSessao: formatarData(document.getElementById('data-sessao').value),
                 horaSessao: formatarHora(document.getElementById('hora-sessao').value),
@@ -986,7 +1051,7 @@
                 tipoDefensor: document.getElementById('tipo-defensor').value,
                 nomeDefensor: document.getElementById('nome-defensor').value,
                 oab: document.getElementById('oab').value,
-                nomeAcusados: document.getElementById('nome-acusados').value,
+                nomeAcusados: obterAcusados(),
                 juradosDispensados: document.getElementById('jurados-dispensados').value,
                 fundamentoDispensa: document.getElementById('fundamento-dispensa').value,
                 suplentes: document.getElementById('suplentes').value,
@@ -1027,7 +1092,7 @@
             let ata = [];
             
             ata.push(`ATA DA ${dados.numeroSessao}ª SESSÃO DE JULGAMENTO DO TRIBUNAL DO JÚRI`);
-            ata.push(`Aos ${dados.dataSessao}, às ${dados.horaSessao}, nesta cidade e Comarca de Tauá, Estado do Ceará, no edifício do Tribunal do Júri, em plenário, presentes o MM. Juiz de Direito, Dr. ${dados.nomeJuiz}, o Promotor de Justiça, Dr. ${dados.nomePromotor}, o ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, os Senhores Jurados abaixo identificados, o(s) Acusado(s), Sr(s). ${dados.nomeAcusados} e os demais circunstantes.`);
+            ata.push(`Aos ${dados.dataSessao}, às ${dados.horaSessao}, nesta cidade e Comarca de ${dados.comarca}, Estado do Ceará, no edifício do Tribunal do Júri, em plenário, presentes o MM. Juiz de Direito, Dr. ${dados.nomeJuiz}, o Promotor de Justiça, Dr. ${dados.nomePromotor}, o ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, os Senhores Jurados abaixo identificados, o(s) Acusado(s), Sr(s). ${dados.nomeAcusados} e os demais circunstantes.`);
             
             ata.push(`Às ${dados.horaSessao} deu-se início aos trabalhos preparatórios para o julgamento dos autos de Ação Penal nº ${dados.numeroProcesso}, momento em que o MM. Juiz de Direito, Presidente da presente sessão de julgamento, após atestar a presença das partes e demais profissionais acima identificados, deliberou acerca dos pedidos de isenção e dispensa dos jurados.`);
             
@@ -1127,9 +1192,9 @@
 
             // Próxima data
             if (dados.proximaSessao === "Sim") {
-                ata.push(`Agradecendo às partes e aos Srs. Jurados e, lembrando-os da convocação para o dia ${dados.dataProximaSessao}, às ${dados.horaProximaSessao}, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, Murilo Medeiros Mariz Alexandrino Feitosa, Diretor de Secretaria, lavrei a presente ata.`);
+                ata.push(`Agradecendo às partes e aos Srs. Jurados e, lembrando-os da convocação para o dia ${dados.dataProximaSessao}, às ${dados.horaProximaSessao}, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, Diretor de Secretaria, lavrei a presente ata.`);
             } else {
-                ata.push("Agradecendo às partes e aos Srs. Jurados, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, Murilo Medeiros Mariz Alexandrino Feitosa, Diretor de Secretaria, lavrei a presente ata.");
+                ata.push(`Agradecendo às partes e aos Srs. Jurados, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, Diretor de Secretaria, lavrei a presente ata.`);
             }
 
             // Criar e baixar arquivo
