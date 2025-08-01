@@ -354,8 +354,18 @@
                         <input type="text" id="comarca" placeholder="Ex: Tauá, Fortaleza, Juazeiro do Norte...">
                     </div>
                     <div class="form-group">
+                        <label>Unidade Judiciária:</label>
+                        <input type="text" id="unidade-judiciaria" placeholder="Ex: 1ª Vara, 2ª Vara Criminal...">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
                         <label>Nome do Digitador:</label>
                         <input type="text" id="nome-digitador" placeholder="Seu nome completo">
+                    </div>
+                    <div class="form-group">
+                        <label>Cargo do Digitador:</label>
+                        <input type="text" id="cargo-digitador" placeholder="Ex: Diretor de Secretaria, Escrevente...">
                     </div>
                 </div>
             </div>
@@ -1015,15 +1025,27 @@
         function gerarAta() {
             // Validações básicas
             const comarca = document.getElementById('comarca').value.trim();
+            const unidadeJudiciaria = document.getElementById('unidade-judiciaria').value.trim();
             const digitador = document.getElementById('nome-digitador').value.trim();
+            const cargoDigitador = document.getElementById('cargo-digitador').value.trim();
             
             if (!comarca) {
                 alert('Por favor, informe a comarca.');
                 return;
             }
             
+            if (!unidadeJudiciaria) {
+                alert('Por favor, informe a unidade judiciária.');
+                return;
+            }
+            
             if (!digitador) {
                 alert('Por favor, informe o nome do digitador.');
+                return;
+            }
+            
+            if (!cargoDigitador) {
+                alert('Por favor, informe o cargo do digitador.');
                 return;
             }
             
@@ -1041,7 +1063,9 @@
             // Coletar dados do formulário
             const dados = {
                 comarca: comarca,
+                unidadeJudiciaria: unidadeJudiciaria,
                 digitador: digitador,
+                cargoDigitador: cargoDigitador,
                 numeroSessao: document.getElementById('numero-sessao').value,
                 dataSessao: formatarData(document.getElementById('data-sessao').value),
                 horaSessao: formatarHora(document.getElementById('hora-sessao').value),
@@ -1092,7 +1116,7 @@
             let ata = [];
             
             ata.push(`ATA DA ${dados.numeroSessao}ª SESSÃO DE JULGAMENTO DO TRIBUNAL DO JÚRI`);
-            ata.push(`Aos ${dados.dataSessao}, às ${dados.horaSessao}, nesta cidade e Comarca de ${dados.comarca}, Estado do Ceará, no edifício do Tribunal do Júri, em plenário, presentes o MM. Juiz de Direito, Dr. ${dados.nomeJuiz}, o Promotor de Justiça, Dr. ${dados.nomePromotor}, o ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, os Senhores Jurados abaixo identificados, o(s) Acusado(s), Sr(s). ${dados.nomeAcusados} e os demais circunstantes.`);
+            ata.push(`Aos ${dados.dataSessao}, às ${dados.horaSessao}, nesta cidade e Comarca de ${dados.comarca} (${dados.unidadeJudiciaria}), Estado do Ceará, no edifício do Tribunal do Júri, em plenário, presentes o MM. Juiz de Direito, Dr. ${dados.nomeJuiz}, o Promotor de Justiça, Dr. ${dados.nomePromotor}, o ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, os Senhores Jurados abaixo identificados, o(s) Acusado(s), Sr(s). ${dados.nomeAcusados} e os demais circunstantes.`);
             
             ata.push(`Às ${dados.horaSessao} deu-se início aos trabalhos preparatórios para o julgamento dos autos de Ação Penal nº ${dados.numeroProcesso}, momento em que o MM. Juiz de Direito, Presidente da presente sessão de julgamento, após atestar a presença das partes e demais profissionais acima identificados, deliberou acerca dos pedidos de isenção e dispensa dos jurados.`);
             
@@ -1192,9 +1216,9 @@
 
             // Próxima data
             if (dados.proximaSessao === "Sim") {
-                ata.push(`Agradecendo às partes e aos Srs. Jurados e, lembrando-os da convocação para o dia ${dados.dataProximaSessao}, às ${dados.horaProximaSessao}, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, Diretor de Secretaria, lavrei a presente ata.`);
+                ata.push(`Agradecendo às partes e aos Srs. Jurados e, lembrando-os da convocação para o dia ${dados.dataProximaSessao}, às ${dados.horaProximaSessao}, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, ${dados.cargoDigitador}, lavrei a presente ata.`);
             } else {
-                ata.push(`Agradecendo às partes e aos Srs. Jurados, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, Diretor de Secretaria, lavrei a presente ata.`);
+                ata.push(`Agradecendo às partes e aos Srs. Jurados, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, ${dados.cargoDigitador}, lavrei a presente ata.`);
             }
 
             // Criar e baixar arquivo
