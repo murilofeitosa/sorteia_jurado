@@ -1112,67 +1112,129 @@
                 horaProximaSessao: formatarHora(document.getElementById('hora-proxima-sessao').value)
             };
 
-            function gerarAta() {
-    // Validações básicas (mantenha as que já existem no seu código)
-    const comarca = document.getElementById('comarca').value.trim();
-    const unidadeJudiciaria = document.getElementById('unidade-judiciaria').value.trim();
-    const digitador = document.getElementById('nome-digitador').value.trim();
-    const cargoDigitador = document.getElementById('cargo-digitador').value.trim();
-    
-    if (!comarca || !unidadeJudiciaria || !digitador || !cargoDigitador) {
-        alert('Por favor, preencha todos os campos obrigatórios na seção "Configuração Inicial".');
-        return;
-    }
-    
-    const numeroProcesso = document.getElementById('numero-processo').value.trim();
-    if (!numeroProcesso || !/^\d{7}-\d{2}\.\d{4}\.8\.06\.\d{4}$/.test(numeroProcesso)) {
-        alert('❌ Número de processo inválido ou não preenchido!\nFormato: 0000000-00.0000.8.06.0000');
-        return;
-    }
+           // Gerar texto da ata
+            let ata = [];
+            
+            ata.push(`ATA DA ${dados.numeroSessao}ª SESSÃO DE JULGAMENTO DO TRIBUNAL DO JÚRI`);
+            ata.push(`Aos ${dados.dataSessao}, às ${dados.horaSessao}, nesta cidade e Comarca de ${dados.comarca} (${dados.unidadeJudiciaria}), Estado do Ceará, no edifício do Tribunal do Júri, em plenário, presentes o MM. Juiz de Direito, Dr. ${dados.nomeJuiz}, o Promotor de Justiça, Dr. ${dados.nomePromotor}, o ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, os Senhores Jurados abaixo identificados, o(s) Acusado(s), Sr(s). ${dados.nomeAcusados} e os demais circunstantes.`);
+            
+            ata.push(`Às ${dados.horaSessao} deu-se início aos trabalhos preparatórios para o julgamento dos autos de Ação Penal nº ${dados.numeroProcesso}, momento em que o MM. Juiz de Direito, Presidente da presente sessão de julgamento, após atestar a presença das partes e demais profissionais acima identificados, deliberou acerca dos pedidos de isenção e dispensa dos jurados.`);
+            
+            ata.push("No mesmo momento, o MM. Juiz Presidente determinou que as testemunhas/ofendido(s) presentes fossem recolhidas a um lugar onde umas não pudessem ouvir os depoimentos das outras, garantindo-se a incomunicabilidade, e passou a verificar se a urna continha as cédulas com os nomes dos jurados sorteados.");
+            
+            ata.push("Precedentemente ao sorteio dos jurados e, em atenção ao art. 5º da Recomendação n. 55, de 08/10/2019, do CNJ, o magistrado determinou a exibição do vídeo institucional elaborado por aquele órgão, objetivando ambientar os jurados convocados para a sessão de julgamento.");
+            
+            ata.push(`Às ${dados.horaSessao} foi dado início ao julgamento do(s) réu(s) ${dados.nomeAcusados}, utilizando-se do sistema Microsoft Teams, na qual se procedeu à gravação audiovisual dos depoimentos e do interrogatório. O MM. Juiz de Direito ordenou que o Sr. Diretor de Secretaria chamasse nominalmente os jurados convocados, sendo que compareceram os seguintes jurados:`);
+            
+            ata.push(presentes.join(', '));
 
-    if (conselho.length === 0) {
-        alert('❌ Realize o sorteio do conselho antes de gerar a ata!');
-        return;
-    }
+            // Parágrafos condicionais
+            if (dados.juradosDispensados.trim()) {
+                ata.push(`\nDiante do requerimento tempestivo foram dispensados os jurados: ${dados.juradosDispensados}.`);
+            }
+            if (dados.fundamentoDispensa.trim()) {
+                ata.push(`Os pedidos de dispensa/isenção contaram com o deferimento do Juiz Presidente amparado nos seguintes fundamentos: ${dados.fundamentoDispensa}.`);
+            }
+            if (dados.suplentes === "Sim" && dados.nomesSuplentes.trim()) {
+                ata.push(`Foram sorteados suplentes: ${dados.nomesSuplentes}.`);
+            }
+            if (dados.testemunhasDispensadas.trim()) {
+                ata.push(`De comum acordo, as partes dispensaram a oitiva das testemunhas ${dados.testemunhasDispensadas}, o que foi homologado pelo juízo.`);
+            }
 
-    // ... (mantenha todo o código de construção da ata que já existe)
-    // Não altere a parte que coleta os dados e constrói o texto da ata
+            ata.push("Após, o MM. Juiz declarou que iria formar o Conselho de Sentença e advertiu os jurados quanto às hipóteses de impedimento, suspeição e incompatibilidade, bem como, que uma vez sorteados, não poderiam se comunicar entre si e com outrem, nem manifestar sua opinião sobre o processo, sob pena de exclusão do Conselho de Sentença e multa de 01 (um) a 10 (dez) salários-mínimos.");
+            
+            ata.push("À medida que os nomes foram sorteados, o MM. Juiz de Direito realizou a leitura em voz alta e, aceitos, compuseram o Conselho de Sentença os seguintes jurados:");
+            
+            conselho.forEach((jurado, i) => {
+                ata.push(`${i+1}. ${jurado}`);
+            });
+            
+            ata.push(`Foram recusados imotivadamente pelo Ministério Público os seguintes jurados: ${recusadosAcusacao.length > 0 ? recusadosAcusacao.join(', ') : 'Nenhum'}.`);
+            ata.push(`Foram recusados imotivadamente pela Defesa os seguintes jurados: ${recusadosDefesa.length > 0 ? recusadosDefesa.join(', ') : 'Nenhum'}.`);
+            
+            ata.push('Seguindo, o MM. Juiz Presidente compromissou o Conselho de Sentença lendo a exortação constante do art. 472 do CPP, pela qual cada jurado chamado nominalmente respondeu: "assim o prometo". Os Srs. Jurados receberam os documentos a que alude o art. 472, parágrafo único, do CPP, momento em que o MM. Juiz de Direito explicou a sua natureza jurídica, expressando-se nos seguintes termos:');
+            
+            ata.push('"Prezados membros do Conselho de Sentença, a partir desse momento os senhores terão acesso ao relatório do processo e também à decisão de pronúncia. Esclareço que a decisão de pronúncia representa um mero juízo de admissibilidade da versão acusatória, sem a qual o réu não poderia ser julgado perante o Tribunal do Júri. Em hipótese alguma, constitui um prejulgamento do caso e não deverá ser considerada pelos Srs. como um argumento de autoridade apto a qualquer juízo de valor a respeito do mérito. Por mandamento constitucional, após a devida instrução e sustentações orais em plenário, o Conselho de Sentença é soberano para, sigilosamente, apreciar as teses que envolvem o presente caso, livre de qualquer influência de terceiros ou mesmo da justiça togada."');
 
-    // --- CÓDIGO NOVO PARA DOWNLOAD (SUBSTITUA APENAS ESTA PARTE FINAL) ---
-    const textoCompleto = ata.join('\n\n');
-    
-    try {
-        // 1. Cria o blob (arquivo em memória) com codificação UTF-8
-        const blob = new Blob(["\uFEFF" + textoCompleto], {
-            type: 'text/plain;charset=utf-8'
-        });
+            // Instrução plenária
+            if (dados.haVitima === "Sim" && dados.nomeVitima.trim()) {
+                ata.push(`Seguindo, teve início a instrução plenária com a oitiva da vítima ${dados.nomeVitima}.`);
+            }
 
-        // 2. Cria um link temporário para download
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        
-        // 3. Define o nome do arquivo (substitui caracteres problemáticos)
-        link.download = `ATA_JURI_${numeroProcesso.replace(/[\/\.]/g, '_')}.txt`;
-        
-        // 4. Adiciona o link na página e simula o clique
-        document.body.appendChild(link);
-        link.click();
-        
-        // 5. Limpeza: remove o link após 100ms
-        setTimeout(() => {
-            document.body.removeChild(link);
-            URL.revokeObjectURL(link.href);
-        }, 100);
-        
-        alert('✅ Ata gerada com sucesso!\nO download começará automaticamente.');
-        
-    } catch (error) {
-        console.error("Erro ao gerar arquivo:", error);
-        // Fallback: abre o conteúdo em nova janela se o download falhar
-        const win = window.open('', '_blank');
-        win.document.write('<pre>' + textoCompleto + '</pre>');
-        win.document.title = 'ATA_JURI - Copiar Manualmente';
-        win.document.close();
-        alert('⚠️ O navegador bloqueou o download automático.\nO conteúdo foi aberto em nova janela para copiar manualmente.');
-    }
-}
+            // Testemunhas
+            if (dados.haTestemunhas === "Sim") {
+                if (dados.testemunhasAcusacao.trim()) {
+                    ata.push(`Em continuação, foram inquiridas as seguintes testemunhas/informantes arroladas pela acusação: ${dados.testemunhasAcusacao}. As quais prestaram o compromisso de dizer a verdade, com exceção de ${dados.informantesAcusacao || '________'}, que foi ouvido como informante.`);
+                }
+                if (dados.testemunhasDefesa.trim()) {
+                    ata.push(`Posteriormente, foram tomados os depoimentos das testemunhas/informantes indicadas pela Defesa: ${dados.testemunhasDefesa}. As quais prestaram o compromisso de dizer a verdade, com exceção de ${dados.informantesDefesa || '________'}, que foi ouvido como informante. Todos os depoimentos foram gravados em arquivo de áudio/vídeo e foram juntados aos autos.`);
+                }
+            } else {
+                ata.push("Após, passou-se ao interrogatório do réu.");
+            }
+
+            // Diligência
+            if (dados.haDiligencia === "Sim") {
+                ata.push(`Foi requerida diligência probatória ou leitura de peças? Sim. Se sim, qual? ${dados.qualDiligencia} Foi deferida? ${dados.diligenciaDeferida} Por quais fundamentos? ${dados.fundamentoDiligencia}`);
+            } else {
+                ata.push("Foi requerida diligência probatória ou leitura de peças? Não.");
+            }
+
+            ata.push("Ato contínuo, foi garantido ao acusado o direito de entrevistar-se de maneira reservada com o seu defensor. Após, o acusado foi informado de todos os seus direitos constitucionais, em especial: o direito de permanecer calado e de não responder as perguntas que lhe forem formuladas.");
+            
+            ata.push("Dirigindo-se aos Srs. Jurados, o MM. Juiz de Direito explicou que o eventual silêncio do acusado não importará em confissão e não poderá ser interpretado em prejuízo da sua defesa. Na sequência, o acusado exerceu a sua autodefesa em plenário, tudo conforme arquivo de áudio/vídeo que foi juntado aos autos.");
+            
+            ata.push(`Seguindo, o MM. Juiz de Direito advertiu às partes das proibições constantes no artigo 478, incisos I e II e artigo 479 do Código de Processo Penal e passou a palavra ao DD. representante do Ministério Público, Dr. ${dados.nomePromotor}, o qual, utilizando-se do horário das ${dados.horaMpInicio} às ${dados.horaMpFim}, requereu: ${dados.pedidoMp || '____'}.`);
+            
+            ata.push(`Em seguida, foi concedida a palavra ao ${dados.tipoDefensor} ${dados.nomeDefensor}${dados.tipoDefensor === 'Advogado(a)' && dados.oab ? ' - OAB/' + dados.oab : ''}, que requereu: ${dados.pedidoDefesa || '____'}. Utilizando-se do horário das ${dados.horaDefesaInicio} às ${dados.horaDefesaFim}.`);
+            
+            ata.push(`Terminado o discurso da Defesa, o Meritíssimo Juiz indagou à Representante do Ministério Público se desejava ir à réplica, tendo ela respondido que ${dados.houveReplica}.`);
+
+            if (dados.houveReplica === "Sim") {
+                ata.push(`Usando o direito da réplica das ${dados.horaReplicaInicio} às ${dados.horaReplicaFim}, o DD. representante do Ministério Público reiterou o pedido de condenação.`);
+                ata.push(`Treplicando, a Defesa falou das ${dados.horaTriplicaInicio} às ${dados.horaTriplicaFim} e reforçou o pedido de absolvição.`);
+            }
+
+            ata.push("Encerrados os debates, após questionados pelo MM. Juiz de Direito, os jurados informaram que estavam habilitados a julgar o caso penal e que não necessitavam de qualquer outro esclarecimento.");
+            ata.push("Na sequência, uma vez lidos e explicados os quesitos em plenário, nenhuma das partes fez qualquer requerimento ou reclamação. Em seguida, o MM. Juiz de Direito declarou que iria proceder à votação e solicitou que o salão fosse esvaziado para este fim, permanecendo apenas as partes, o Oficial de Justiça e a mim, Diretor de Secretaria.");
+            ata.push("No salão esvaziado, sob sua presidência, após a advertência constante no disposto no artigo 485, § 2º, do Código de Processo Penal, explicou o procedimento a ser seguido e deu início à votação, fazendo o uso de pequenas cédulas, feitas de papel opaco, facilmente dobráveis e que continham as palavras \"sim\" e \"não\".");
+            ata.push("Durante a votação, foram utilizadas duas urnas, sendo uma para os votos e a outra para as cédulas não utilizadas. Após cada resposta, verificados os votos e as cédulas não utilizadas, o MM. Juiz de Direito determinou o registro no termo de votação de cada quesito, bem como o resultado do julgamento.");
+            
+            // Sentença
+            const textoSentenca = dados.resultadoJulgamento === 'Absolvição' 
+                ? "Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a SENTENÇA ABSOLUTÓRIA, em voz alta, tornando público o julgado."
+                : "Terminada a votação e assinado o termo, o MM. Juiz de Direito determinou a abertura das portas para que o público retornasse ao salão do júri e leu a SENTENÇA CONDENATÓRIA, em voz alta, tornando público o julgado.";
+            
+            ata.push(textoSentenca);
+
+            // Recurso
+            if (dados.houveRecurso === "Sim") {
+                ata.push(`${dados.quemRecorreu} manifestou, em plenário, a intenção de recorrer da decisão, nos termos do ${dados.fundamentoRecurso}, alegando nulidade posterior à pronúncia.`);
+                ata.push('Decisão: "Recebo o recurso interposto uma vez que estão presentes os pressupostos de admissibilidade. Após a degravação dos registros de áudios desta sessão de julgamento, remetam-se os autos à Defensoria Pública para apresentação das razões recursais. Em seguida, dê-se vista ao Ministério Público para contrarrazões. Por fim, proceda-se a secretaria com as demais diligências de praxe."');
+            }
+
+            // Próxima data
+            if (dados.proximaSessao === "Sim") {
+                ata.push(`Agradecendo às partes e aos Srs. Jurados e, lembrando-os da convocação para o dia ${dados.dataProximaSessao}, às ${dados.horaProximaSessao}, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, ${dados.cargoDigitador}, lavrei a presente ata.`);
+            } else {
+                ata.push(`Agradecendo às partes e aos Srs. Jurados, o MM. Juiz de Direito deu por encerrada a sessão. Do que para constar, eu, ${dados.digitador}, ${dados.cargoDigitador}, lavrei a presente ata.`);
+            }
+
+            // Criar e baixar arquivo
+            const textoCompleto = ata.join('\n\n');
+            const blob = new Blob([textoCompleto], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ATA_JURI_${numeroProcesso}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            alert('✅ Ata gerada e baixada com sucesso!\n\n📄 Arquivo: ATA_JURI_' + numeroProcesso + '.txt');
+        }
+    </script>
+</body>
+</html>
