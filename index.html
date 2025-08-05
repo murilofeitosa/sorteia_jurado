@@ -337,6 +337,7 @@
         <div class="header">
             <h1>⚖️ Sistema do Tribunal do Júri</h1>
             <p>Estado do Ceará</p>
+            <p>Desenvolvido por Murilo Feitosa</p>
         </div>
 
         <div class="tabs">
@@ -1088,10 +1089,11 @@
                 informantesAcusacao: document.getElementById('informantes-acusacao').value,
                 testemunhasDefesa: document.getElementById('testemunhas-defesa').value,
                 informantesDefesa: document.getElementById('informantes-defesa').value,
-                haDiligencia: document.getElementById('ha-diligencia').value,
-                qualDiligencia: document.getElementById('qual-diligencia').value,
-                diligenciaDeferida: document.getElementById('diligencia-deferida').value,
-                fundamentoDiligencia: document.getElementById('fundamento-diligencia').value,
+                // Os campos abaixo não existem no seu HTML, adicionei-os aqui para evitar erros, mas você pode removê-los se não for usá-los.
+                haDiligencia: 'Não', 
+                qualDiligencia: '',
+                diligenciaDeferida: '',
+                fundamentoDiligencia: '',
                 horaMpInicio: formatarHora(document.getElementById('hora-mp-inicio').value),
                 horaMpFim: formatarHora(document.getElementById('hora-mp-fim').value),
                 pedidoMp: document.getElementById('pedido-mp').value,
@@ -1231,9 +1233,6 @@
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);
-
-            alert('✅ Ata gerada e baixada com sucesso!\n\n📄 Arquivo: ATA_JURI_' + numeroProcesso + '.txt');
         }
     </script>
 </body>
